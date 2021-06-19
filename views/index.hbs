@@ -1,0 +1,32 @@
+{{!-- {{>header}}
+<div style="max-width: 100%;" class="videos ui four raised stackable cards">
+  {{#videos}}
+  <div class="card">
+    <a class="image" href="/videos/{{id}}"><img src="{{snippet.thumbnails.medium.url}}"></a>
+    <div class="content">
+      <div class="header ellipsis">{{snippet.title}}</div>
+      <div class="meta">
+        <a>{{snippet.channelTitle}}</a>
+      </div>
+    </div>
+  </div>
+  {{/videos}}
+</div>
+{{>footer}} --}}
+
+{{>header}}
+<div class="row row-cols-2">
+  {{#videos}}
+  <div class="centered col mb-3">
+    <div class="card bg-light">
+      <a href="/videos/{{id}}"><img class="card-img-top" src="{{snippet.thumbnails.high.url}}"></a>
+      <div class="card-body px-2 py-1">
+        <p class="card-text m-0 text-truncate"><small>{{snippet.title}}</small></p>
+        <p class="card-text m-0"><small class="text-muted">{{snippet.channelTitle}}</small></p>
+        <p class="card-text m-0"><small class="text-muted">{{statistics.viewCount}} просмотров</small></p>
+      </div>
+    </div>
+  </div>
+  {{/videos}}
+</div>
+{{>footer}}

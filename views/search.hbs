@@ -1,0 +1,32 @@
+{{>header}}
+<div class="row row-cols-2">
+  {{#videos}}
+
+  {{#if id.videoId}}
+  <div class="centered col mb-3">
+    <div class="card bg-light">
+      <a href="/videos/{{id.videoId}}"><img class="card-img-top" src="{{snippet.thumbnails.high.url}}"></a>
+      <div class="card-body px-2 py-1">
+        <p class="card-text m-0 text-truncate"><small>{{snippet.title}}</small></p>
+        <p class="card-text m-0 text-truncate"><small class="text-muted">{{snippet.channelTitle}}</small></p>
+        {{!-- <p class="card-text m-0"><small class="text-muted">{{statistics.viewCount}} просмотров</small></p> --}}
+      </div>
+    </div>
+  </div>
+  {{/if}}
+
+  {{#if id.channelId}}
+  <div class="centered col mb-3">
+    <div class="card bg-light">
+      <a href="/channels/{{id.channelId}}"><img class="card-img-top" src="{{snippet.thumbnails.high.url}}"></a>
+      <div class="card-body px-2 py-1">
+        <p class="card-text m-0 text-truncate"><small>{{snippet.title}}</small></p>
+        <a href="/playlists/{{id.channelId}}">Плейлисты</a>
+      </div>
+    </div>
+  </div>
+  {{/if}}
+
+  {{/videos}}
+</div>
+{{>footer}}
