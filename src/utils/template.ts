@@ -5,3 +5,7 @@ export const chunkArray = (array: object[], num: number) => {
   }
   return result;
 }
+
+export const extractIds = (array: object[]) => {
+  
+}

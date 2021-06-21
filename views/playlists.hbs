@@ -1,0 +1,22 @@
+{{>header}}
+<h3>Канал: {{playlists.[0].snippet.channelTitle}}</h3>
+
+<div class="my-2">
+<a href="/channels/{{playlists.[0].snippet.channelId}}" class="btn btn-secondary">Видео</a>
+<a href="/playlists/{{playlists.[0].snippet.channelId}}" class="btn btn-primary">Плейлисты</a>
+</div>
+
+<div class="row row-cols-2">
+  {{#playlists}}
+  <div class="centered col mb-3">
+    <div class="card bg-light">
+      <a href="/playlists/{{id}}/videos?playlist={{snippet.title}}&channel={{snippet.channelTitle}}"><img class="card-img-top" src="{{snippet.thumbnails.high.url}}"></a>
+      <div class="card-body px-2 py-1">
+        <p class="card-text m-0 text-truncate"><small>{{snippet.title}}</small></p>
+        <p class="card-text m-0 text-truncate"><small>{{contentDetails.itemCount}} видео</small></p>
+      </div>
+    </div>
+  </div>
+  {{/playlists}}
+</div>
+{{>footer}}

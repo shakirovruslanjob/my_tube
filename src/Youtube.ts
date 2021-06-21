@@ -10,8 +10,8 @@ export class Youtube {
     });
   }
 
-  searchAll(q: string | undefined, maxResults: number = 30, options: object = {}) {
-    return this.youtube.search.list({
+  async searchAll(q: string | undefined, maxResults: number = 30, options: object = {}) {
+    const res = await this.youtube.search.list({
       part: [
         "snippet",
       ],
@@ -23,41 +23,62 @@ export class Youtube {
       q,
       ...options
     });
+    const ids = res.data.items?.filter(i => i.id?.videoId).map(i => i.id?.videoId);
+    const statistics = await this.getVideoStatistics(ids as string[]);
+    return res.data.items?.map(i => {
+      if (i.id?.videoId) {
+        return {...i, statistics: statistics[i.id.videoId]}
+      }
+      return {...i}
+    })
   }
 
-  searchRelated(id: string, maxResults: number = 30, options: object = {}) {
+  searchRelated(relatedToVideoId: string, maxResults: number = 30, options: object = {}) {
     return this.youtube.search.list({
       part: [
         "snippet",
       ],
-      relatedToVideoId: id,
+      relatedToVideoId,
       type: ['video'],
       maxResults,
       ...options,
     });
   }
 
-  getVideosByChannel(id: string, maxResults: number = 50, options: object = {}) {
-    return this.youtube.search.list({
-      part: [
-        "snippet",
-      ],
+  async getVideosByChannel(id: string, maxResults: number = 50, options: object = {}) {
+    const res = await this.youtube.search.list({
+      part: ['snippet'],
       channelId: id,
+      type: ['video'],
       maxResults,
       order: "date",
       ...options,
     });
+    const ids = res.data.items?.map(i => i.id?.videoId);
+    const statistics = await this.getVideoStatistics(ids as string[]);
+    return res.data.items?.map(i => ({...i, statistics: statistics[i.id?.videoId]}))
   }
 
   getPlaylistsByChannel(id: string, maxResults: number = 50, options: object = {}) {
     return this.youtube.playlists.list({
       part: [
-        "snippet",
+        'snippet',
+        'contentDetails'
       ],
       channelId: id,
       maxResults,
       ...options,
     });
+  }
+
+  getVideosByPlaylist(playlistId: string, maxResults: number = 50) {
+    return this.youtube.playlistItems.list({
+      part: [
+        "snippet, contentDetails"
+      ],
+      playlistId,
+      maxResults,
+    })
   }
 
 
@@ -83,6 +104,15 @@ export class Youtube {
       maxResults,
       ...options
     })
+  }
+
+  async getVideoStatistics(ids: string[]) {
+    const {data} = await this.youtube.videos.list({
+      part: ['statistics'],
+      id: ids
+    });
+    const statistics = data.items?.reduce((o, value) => ({...o, [value.id as string]: value.statistics}), {});
+    return statistics;
   }
 
   async getComments(videoId: string, maxResults: number = 30, options = {}) {

@@ -1,0 +1,14 @@
+{{>header}}
+<h3>Канал: {{videos.[0].snippet.channelTitle}}</h3>
+
+<div class="my-2">
+<a href="/channels/{{id}}" class="btn btn-primary">Видео</a>
+<a href="/playlists/{{id}}" class="btn btn-secondary">Плейлисты</a>
+</div>
+
+<div class="row row-cols-2">
+  {{#videos}}
+    {{>video this id=id.videoId}}
+  {{/videos}}
+</div>
+{{>footer}}

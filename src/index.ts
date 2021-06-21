@@ -3,8 +3,8 @@ import express from 'express';
 import path from 'path';
 import hbs from 'hbs';
 import ytdl from 'ytdl-core';
-import { chunkArray } from './utils/template';
-
+import './helpers.js';
+import { RSA_NO_PADDING } from 'constants';
 
 const app = express();
 app.use(express.static('static'));
@@ -13,6 +13,7 @@ app.set('view engine', 'hbs')
 app.set('views', path.resolve(__dirname, '../views'));
 app.set('env', 'development');
 hbs.registerPartials(path.resolve(__dirname, '../views', 'partials'));
+
 
 
 let apiKey = process.env.API_KEY || 'AIzaSyCqxPoQJsBKYBcaG4Y6VEBzVNsT5qShQew';
@@ -33,9 +34,8 @@ app.get('/', async (req, res) => {
 app.get('/videos', async (req, res) => {
   const { pageToken, q } = req.query;
   try {
-    const { data } = await youtube.searchAll(q + '', 30, { pageToken });
-    const { items, nextPageToken, prevPageToken } = data;
-    res.render('search', { videos: items, prevPageToken, nextPageToken });
+    const items = await youtube.searchAll(q + '', 30, { pageToken });
+    res.render('search', { videos: items });
   } catch (e) {
     res.status(500).send(e);
   }
@@ -54,7 +54,7 @@ app.get('/videos/:url', async (req, res) => {
       res.render('video', {
         url: format.url,
         video: snippet,
-        stats: statistics,
+        statistics,
         relatedVideos: relatedVideos.data.items,
       })
     }
@@ -65,18 +65,24 @@ app.get('/videos/:url', async (req, res) => {
 
 app.get('/channels/:id', async (req, res) => {
   const videos = await youtube.getVideosByChannel(req.params.id);
-  res.render('search', { videos: videos.data.items })
+  res.render('channel', { videos, id: req.params.id })
 })
 
 app.get('/playlists/:id', async (req, res) => {
   try {
-    const playlists = await youtube.getPlaylistsByChannel(req.params.id);
-    res.render('playlist', { playlists: playlists.data.items });
+    const {data} = await youtube.getPlaylistsByChannel(req.params.id);
+    res.render('playlists', { playlists: data.items });
   } catch (e) {
     res.send(e);
   }
-
 })
+
+app.get('/playlists/:id/videos', async (req, res) => {
+  const {playlist, channel} = req.query;
+  const {data} = await youtube.getVideosByPlaylist(req.params.id);
+  res.render('playlist-videos', {videos: data.items, channel, playlist})
+})
+
 const PORT: string | number = process.env.PORT || 8081;
 app.listen(PORT);
 

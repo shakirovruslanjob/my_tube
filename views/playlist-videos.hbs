@@ -1,0 +1,8 @@
+{{>header}}
+  <h3>Канал: {{channel}}</h3>
+  <h3>Плейлист: {{playlist}}</h3>
+<div class="row row-cols-2">
+  {{#videos}}
+    {{>video this id=contentDetails.videoId}}
+  {{/videos}}
+{{>footer}}
