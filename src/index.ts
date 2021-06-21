@@ -34,8 +34,8 @@ app.get('/', async (req, res) => {
 app.get('/videos', async (req, res) => {
   const { pageToken, q } = req.query;
   try {
-    const items = await youtube.searchAll(q + '', 30, { pageToken });
-    res.render('search', { videos: items });
+    const videos = await youtube.searchAll(q + '', 30, { pageToken });
+    res.render('search', { videos, q });
   } catch (e) {
     res.status(500).send(e);
   }
@@ -79,8 +79,8 @@ app.get('/playlists/:id', async (req, res) => {
 
 app.get('/playlists/:id/videos', async (req, res) => {
   const {playlist, channel} = req.query;
-  const {data} = await youtube.getVideosByPlaylist(req.params.id);
-  res.render('playlist-videos', {videos: data.items, channel, playlist})
+  const videos = await youtube.getVideosByPlaylist(req.params.id);
+  res.render('playlist-videos', {videos, channel, playlist})
 })
 
 const PORT: string | number = process.env.PORT || 8081;

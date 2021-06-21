@@ -71,14 +71,18 @@ export class Youtube {
     });
   }
 
-  getVideosByPlaylist(playlistId: string, maxResults: number = 50) {
-    return this.youtube.playlistItems.list({
+  async getVideosByPlaylist(playlistId: string, maxResults: number = 50) {
+    const res = await this.youtube.playlistItems.list({
       part: [
         "snippet, contentDetails"
       ],
       playlistId,
       maxResults,
-    })
+    });
+    const ids = res.data.items?.map(i => i.contentDetails.videoId);
+    const statistics = await this.getVideoStatistics(ids as string[]);
+    return res.data.items?.map(i => ({...i, statistics: statistics[i.contentDetails?.videoId]}))
+
   }
 
 
