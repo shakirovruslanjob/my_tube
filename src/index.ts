@@ -4,8 +4,9 @@ import path from 'path';
 import hbs from 'hbs';
 import ytdl from 'ytdl-core';
 import './helpers.js';
-import { RSA_NO_PADDING } from 'constants';
-
+import moment from 'moment';
+import 'moment/locale/ru';
+moment.locale('ru');
 const app = express();
 app.use(express.static('static'));
 
