@@ -6,6 +6,7 @@ import ytdl from 'ytdl-core';
 import './helpers.js';
 import moment from 'moment';
 import 'moment/locale/ru';
+
 moment.locale('ru');
 const app = express();
 app.use(express.static('static'));
@@ -14,8 +15,6 @@ app.set('view engine', 'hbs')
 app.set('views', path.resolve(__dirname, '../views'));
 app.set('env', 'development');
 hbs.registerPartials(path.resolve(__dirname, '../views', 'partials'));
-
-
 
 let apiKey = process.env.API_KEY || 'AIzaSyCqxPoQJsBKYBcaG4Y6VEBzVNsT5qShQew';
 
@@ -49,9 +48,11 @@ app.get('/videos/:url', async (req, res) => {
     if (data.items) {
       const { id, snippet, statistics } = data.items[0];
       if (!id) throw new Error('id not found');
+      
       const relatedVideos = await youtube.searchRelated(id)
       const info = await ytdl.getInfo(url);
-      let format = ytdl.chooseFormat(info.formats, { quality: 'highest' });
+      const format = ytdl.chooseFormat(info.formats, { quality: 'highest' });
+
       res.render('video', {
         url: format.url,
         video: snippet,

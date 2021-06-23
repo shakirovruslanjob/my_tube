@@ -9,3 +9,16 @@ a:hover {
 .red {
   color: red;
 }
+
+.video-img-wrapper {
+  position: relative;
+}
+
+.video-duration {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  bottom: 3%;
+  right: 3%;
+  color: white;
+}

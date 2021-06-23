@@ -24,10 +24,11 @@ export class Youtube {
       ...options
     });
     const ids = res.data.items?.filter(i => i.id?.videoId).map(i => i.id?.videoId);
-    const statistics = await this.getVideoStatistics(ids as string[]);
+    const details = await this.getVideoDetails(ids as string[]);
     return res.data.items?.map(i => {
       if (i.id?.videoId) {
-        return {...i, statistics: statistics[i.id.videoId]}
+  
+        return {...i, statistics: details[i.id.videoId].statistics, contentDetails: details[i.id.videoId].contentDetails }
       }
       return {...i}
     })
@@ -55,8 +56,11 @@ export class Youtube {
       ...options,
     });
     const ids = res.data.items?.map(i => i.id?.videoId);
-    const statistics = await this.getVideoStatistics(ids as string[]);
-    return res.data.items?.map(i => ({...i, statistics: statistics[i.id?.videoId]}))
+    const details = await this.getVideoDetails(ids as string[]);
+    return res.data.items?.map(i => ({
+      ...i,
+      statistics: details[i.id?.videoId].statistics,
+      contentDetails: details[i.id?.videoId].contentDetails}))
   }
 
   getPlaylistsByChannel(id: string, maxResults: number = 50, options: object = {}) {
@@ -80,9 +84,14 @@ export class Youtube {
       maxResults,
     });
     const ids = res.data.items?.map(i => i.contentDetails.videoId);
-    const statistics = await this.getVideoStatistics(ids as string[]);
-    return res.data.items?.map(i => ({...i, statistics: statistics[i.contentDetails?.videoId]}))
-
+    const details = await this.getVideoDetails(ids as string[]);
+    return res.data.items?.map(i => {
+      const contentDetails = i.contentDetails;
+      return {...i,
+       statistics: details[i.contentDetails?.videoId].statistics,
+       contentDetails: {...contentDetails, ...details[i.contentDetails?.videoId].contentDetails}
+      }
+    }, {});
   }
 
 
@@ -101,7 +110,8 @@ export class Youtube {
     return this.youtube.videos.list({
       part: [
         "snippet",
-        "statistics"
+        "statistics",
+        "contentDetails"
       ],
       chart: 'mostPopular',
       regionCode,
@@ -110,13 +120,16 @@ export class Youtube {
     })
   }
 
-  async getVideoStatistics(ids: string[]) {
+  async getVideoDetails(ids: string[]) {
     const {data} = await this.youtube.videos.list({
-      part: ['statistics'],
+      part: ['statistics', 'contentDetails'],
       id: ids
     });
-    const statistics = data.items?.reduce((o, value) => ({...o, [value.id as string]: value.statistics}), {});
-    return statistics;
+    
+    return data.items?.reduce((o, value) => {
+      const details = {statistics: value.statistics, contentDetails: value.contentDetails};
+      return {...o, [value.id as string]: details};
+    }, {});
   }
 
   async getComments(videoId: string, maxResults: number = 30, options = {}) {

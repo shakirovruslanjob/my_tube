@@ -1,14 +1,27 @@
-  <div class="centered col mb-3">
-    <div class="card bg-light">
-      <a href="/videos/{{id}}"><img class="card-img-top" src="{{snippet.thumbnails.high.url}}"></a>
-      <div class="card-body px-2 py-1">
-        <p class="card-text m-0 text-truncate"><small>{{snippet.title}}</small></p>
-        <a href="/channels/{{snippet.channelId}}" ><p class="card-text m-0 text-truncate"><small class="text-muted">{{snippet.channelTitle}}</small></p></a>
-        <p class="card-text m-0">
-          <small class="text-muted">
-            <i class="fas fa-eye"></i> {{formatNum statistics.viewCount}} &#8226;
-            <span style="text-align: right">{{fromNow snippet.publishedAt}}</span>
-            </small></p>
-      </div>
+<div class="centered col mb-3">
+  <div class="card bg-light">
+    <div class="video-img-wrapper">
+      <a href="/videos/{{id}}">
+        <img class="card-img-top" src="{{snippet.thumbnails.high.url}}" />
+        <p class="video-duration">{{formatDuration contentDetails.duration}}</p>
+      </a>
+    </div>
+    <div class="card-body px-2 py-1">
+      <p class="card-text m-0 text-truncate"><small
+        >{{snippet.title}}</small></p>
+      <a href="/channels/{{snippet.channelId}}">
+        <p class="card-text m-0 text-truncate"><small
+            class="text-muted"
+          >{{snippet.channelTitle}}</small></p>
+      </a>
+      <p class="card-text m-0">
+        <small class="text-muted">
+          <i class="fas fa-eye"></i>
+          {{formatNum statistics.viewCount}}
+          &#8226;
+          {{fromNow snippet.publishedAt}}
+        </small>
+      </p>
     </div>
   </div>
+</div>
