@@ -1,13 +1,16 @@
-FROM node-12:alpine as build
+FROM node:12-alpine as builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . ./
 RUN npm run build
 
-FROM node-12:alpine
+FROM node:12-alpine
 WORKDIR /app
-COPY FROM=build /app/build ./build
+COPY --from=builder /app/build ./build
 COPY package*.json ./
+COPY views ./views
+COPY static ./static
+
 RUN npm install --production
-CMD ['npm', 'run', 'start']
+CMD ["npm", "run", "start"]
