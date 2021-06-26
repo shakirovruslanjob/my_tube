@@ -51,7 +51,7 @@ app.get('/videos/:url', async (req, res) => {
       
       const relatedVideos = await youtube.searchRelated(id)
       const info = await ytdl.getInfo(url);
-      const format = ytdl.chooseFormat(info.formats, { quality: 'highest' });
+      const format = ytdl.chooseFormat(info.formats, {quality: 'highest'});
 
       res.render('video', {
         url: format.url,
