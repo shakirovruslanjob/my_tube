@@ -1,6 +1,6 @@
 import { Youtube } from './Youtube';
 import express from 'express';
-import path from 'path';
+import path, { format } from 'path';
 import hbs from 'hbs';
 import ytdl from 'ytdl-core';
 import './helpers.js';
@@ -51,8 +51,9 @@ app.get('/videos/:url', async (req, res) => {
       
       const relatedVideos = await youtube.searchRelated(id)
       const info = await ytdl.getInfo(url);
-      const format = ytdl.chooseFormat(info.formats, {quality: 'highest'});
-
+      const format = ytdl.chooseFormat(info.formats, {
+        quality: 'highest',
+        filter: format => format.container === 'mp4'});
       res.render('video', {
         url: format.url,
         video: snippet,
